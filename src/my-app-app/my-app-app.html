@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="my-app-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <button on-tap=_handleTap>Send</button>
+
+
+    <template is="dom-repeat" items="{{people}}">
+      <div>{{item.id}} {{item.name}}</div>
+    </template>
+
+    <iron-ajax
+        auto
+        method="GET"
+        url="/api/"
+        handle-as="json"
+        last-response="{{people}}"
+        on-response="_handleResponse">
+    </iron-ajax>
+
+    <iron-ajax
+        id="post"
+        method="POST"
+        url="/api/"
+        content-type="application/json"
+        body="{{person}}"
+        last-response="{{people}}"
+        on-response="_handleResponse">
+    </iron-ajax>
+
+  </template>
+
+
+
+
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MyAppApp extends Polymer.GestureEventListeners(Polymer.Element) {
+      static get is() { return 'my-app-app'; }
+      static get properties() {
+        return {
+          people: Array,
+          person: {
+            type: Object,
+            value: {
+              name: "Test"
+            }
+          }
+        }
+
+      }
+      _handleResponse (event) {
+        console.log(event)
+      }
+      _handleTap (event) {
+        console.log(this.person)
+        this.person.name = "Polymer"
+        this.$.post.generateRequest();
+      }
+    }
+
+    window.customElements.define(MyAppApp.is, MyAppApp);
+  </script>
+</dom-module>
